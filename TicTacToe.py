@@ -26,15 +26,15 @@ def playerinput():
 
 
 #Randomly decide who goes first
-def randomstart():
+def randomstart(player1,player2):
     print("Randomizing who makes the 1st move...")
     num = random.randint(0,1)
     if num == 1:
-        print ("{} will start the game".format(player_name1))
+        print ("%s will start the game" %player1)
         return(1)
     else:
-        print ("{} will start the game".format(player_name2))
-        return(0)
+        print ("%s will start the game" %player2)
+        return(2)
 
 #Checks and returns true if space is free
 def freespace(board,move):
@@ -51,6 +51,13 @@ def playermove(board):
 #Makes the move
 def makemove(board,player,move):
     board[move] = player
+
+#Switches player's turn after each move
+def switchturn(turn):
+    if turn == 1:
+        return 2
+    else:
+        return 1
 
 #Checks horizontal, vertical and diagonal wins from a player
 def checkwinner(board,player):
@@ -80,17 +87,46 @@ def boardfull(board):
 
 
 
-#Set up, only initialize once
-board = [" "] * 10
-display(board)
-player_name1, player_marker1, player_name2, player_marker2 = playerinput()
-turn = randomstart()
+
+def main():
+    #Set up, only initialize once
+    board = [" "] * 10
+    gamestatus = True
+    player_name1, player_marker1, player_name2, player_marker2 = playerinput()
+    while gamestatus == True:
+        print(player_name1)
+        turn = randomstart(player_name1,player_name2)
+        if turn == 1:
+            display(board)
+            move = playermove(board)
+            makemove(board,player_marker1,move)
+            if checkwinner(board,player_marker1) == True:
+                display(board)
+                print("%s has won the game!" %player_name1)
+                gamestatus = False
+
+            elif boardfull(board):
+                display(board)
+                print("The game is a draw")
+                gamestatus = False
+            else:
+                turn = 2
+        elif turn == 2:
+            display(board)
+            move = playermove(board)
+            makemove(board,player_marker2,move)
+            if checkwinner(board,player_marker2) == True:
+                display(board)
+                print("%s has won the game!" %player_name2)
+                gamestatus = False
+           
+            elif boardfull(board):
+                display(board)
+                print("The game is a draw")
+                gamestatus = False    
+            else:
+                turn = 1                    
+main()
  
 
-
-
-board[1] = player_marker1 
-board[5] = player_marker1
-board[9] = player_marker1
-print(checkwinner(board,player_marker1))
 
