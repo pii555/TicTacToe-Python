@@ -36,7 +36,7 @@ def randomstart():
         print ("{} will start the game".format(player_name2))
         return(0)
 
-#Test
+#Testing
 
 
 
