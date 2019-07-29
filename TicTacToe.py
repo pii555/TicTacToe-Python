@@ -1,3 +1,4 @@
+#Imports time for setting a delay and random for randomizing player initializing
 import random, time
 
 #Creates the initial display of the board and refreshes the board
@@ -14,6 +15,7 @@ def playerinput():
 
     marker = input("%s, would you like to be X or O: " %player_name1)
     marker = marker.upper()
+    #Checks if valid character was inputted
     while marker != "X" and marker != "O":
         marker = input("Invalid input, choose again %s. Would you like to be X or O: " %player_name1)
         marker = marker.upper()
@@ -99,8 +101,6 @@ def newgame(board):
         board[i] = " "
     return True
     
-
-
 
 
 
