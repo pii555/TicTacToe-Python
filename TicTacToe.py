@@ -84,6 +84,7 @@ def boardfull(board):
             return False
     return True
 
+#Asks players if they'd like to play again
 def playagain():
     decision = input("Would you like to play again?: " )
     decision = decision.lower()
@@ -92,6 +93,7 @@ def playagain():
     else:
         return False
 
+#Resets the board of existing values
 def newgame(board):
     for i in range(1,10):
         board[i] = " "
@@ -110,7 +112,9 @@ def main():
     turn = randomstart(player_name1,player_name2)
     print ("The game will commence!")
     time.sleep(3)
+    #Game loops while status is true
     while gamestatus == True:
+        #Logic for player 1
         if turn == 1:
             display(board)
             move = playermove(board,player_name1)
@@ -125,6 +129,7 @@ def main():
                 display(board)
                 print("The game is a draw")
                 gamestatus = False
+        #logic for player 2
         elif turn == 2:
             display(board)
             move = playermove(board,player_name2)
@@ -139,6 +144,7 @@ def main():
                 display(board)
                 print("The game is a draw")
                 gamestatus = False      
+        #Checks if game has ended and if the players wanted to play again
         if gamestatus == False and playagain() == True:
             gamestatus = newgame(board)
 
