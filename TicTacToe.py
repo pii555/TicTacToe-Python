@@ -1,4 +1,4 @@
-import random
+import random, time
 
 #Creates the initial display of the board and refreshes the board
 def display(board):
@@ -29,6 +29,7 @@ def playerinput():
 def randomstart(player1,player2):
     print("Randomizing who makes the 1st move...")
     num = random.randint(0,1)
+    time.sleep(1)
     if num == 1:
         print ("%s will start the game" %player1)
         return(1)
@@ -41,10 +42,10 @@ def freespace(board,move):
     return board[move] == " "
 
 #Lets player type where to place their move
-def playermove(board):
+def playermove(board,name):
     move = ""
     while move not in '1 2 3 4 5 6 7 8 9'.split() or not freespace(board, int(move)):
-        print("What's your move? (1-9)")
+        print("%s, What's your move? (1-9)" %name)
         move = input()
     return int(move)
 
@@ -83,6 +84,19 @@ def boardfull(board):
             return False
     return True
 
+def playagain():
+    decision = input("Would you like to play again?: " )
+    decision = decision.lower()
+    if decision == "yes":
+        return True
+    else:
+        return False
+
+def newgame(board):
+    for i in range(1,10):
+        board[i] = " "
+    return True
+    
 
 
 
@@ -93,13 +107,15 @@ def main():
     board = [" "] * 10
     gamestatus = True
     player_name1, player_marker1, player_name2, player_marker2 = playerinput()
+    turn = randomstart(player_name1,player_name2)
+    print ("The game will commence!")
+    time.sleep(3)
     while gamestatus == True:
-        print(player_name1)
-        turn = randomstart(player_name1,player_name2)
         if turn == 1:
             display(board)
-            move = playermove(board)
+            move = playermove(board,player_name1)
             makemove(board,player_marker1,move)
+            turn = 2
             if checkwinner(board,player_marker1) == True:
                 display(board)
                 print("%s has won the game!" %player_name1)
@@ -109,12 +125,11 @@ def main():
                 display(board)
                 print("The game is a draw")
                 gamestatus = False
-            else:
-                turn = 2
         elif turn == 2:
             display(board)
-            move = playermove(board)
+            move = playermove(board,player_name2)
             makemove(board,player_marker2,move)
+            turn = 1
             if checkwinner(board,player_marker2) == True:
                 display(board)
                 print("%s has won the game!" %player_name2)
@@ -123,9 +138,10 @@ def main():
             elif boardfull(board):
                 display(board)
                 print("The game is a draw")
-                gamestatus = False    
-            else:
-                turn = 1                    
+                gamestatus = False      
+        if gamestatus == False and playagain() == True:
+            gamestatus = newgame(board)
+
 main()
  
 
