@@ -196,7 +196,6 @@ def main():
     #Set up, only initialize once
     board = [" "] * 10
     gamechoice = selectgametype()
-    print(gamechoice)
     gamestatus = True
     if gamechoice == 1:
         player_name1, player_marker1, player_name2, player_marker2 = twoplayerinput()
