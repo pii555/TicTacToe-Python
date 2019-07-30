@@ -8,23 +8,40 @@ def display(board):
     print (board[4] + '|' + board[5] + "|" + board[6])
     print (board[1] + '|' + board[2] + "|" + board[3])
 
-#Users inputs their name and the respective piece they would like to play in the game
-def playerinput():
-    player_name1 = input("What is the name of the 1st player?: ")
-    player_name2 = input("What is the name of the 2nd player?: ")
-
+#1 player game input
+def oneplayerinput():
+    player_name1 = input("What is your name?: ")
     marker = input("%s, would you like to be X or O: " %player_name1)
     marker = marker.upper()
-    #Checks if valid character was inputted
+
+    #Loops until a valid choice is made
     while marker != "X" and marker != "O":
         marker = input("Invalid input, choose again %s. Would you like to be X or O: " %player_name1)
         marker = marker.upper()
     player_marker_1 = marker
     if player_marker_1 == "X":
-        player_marker_2 = "O"
+        computer_marker = "O"
     else:
-        player_marker_2 = "X"
-    return (player_name1,player_marker_1,player_name2,player_marker_2)
+        computer_marker = "X"
+    return (player_name1,player_marker_1,computer_marker)
+
+#Users inputs their name and the respective piece they would like to play in the game
+def twoplayerinput():
+    player_name1 = input("What is the name of the 1st player?: ")
+    player_name2 = input("What is the name of the 2nd player?: ")
+    marker = input("%s, would you like to be X or O: " %player_name1)
+    marker = marker.upper()
+
+    #Checks if valid character was inputted
+    while marker != "X" and marker != "O":
+        marker = input("Invalid input, choose again %s. Would you like to be X or O: " %player_name1)
+        marker = marker.upper()
+    player_marker1 = marker
+    if player_marker1 == "X":
+        player_marker2 = "O"
+    else:
+        player_marker2 = "X"
+    return (player_name1,player_marker1,player_name2,player_marker2)
 
 
 #Randomly decide who goes first
@@ -63,18 +80,18 @@ def switchturn(turn):
         return 1
 
 #Checks horizontal, vertical and diagonal wins from a player
-def checkwinner(board,player):
+def checkwinner(board,playermarker):
 #Checking horizontal
-    if ((board[7] == player and board[8] == player and board[9] == player) or
-    (board[4] == player and board[5] == player and board[6] == player) or
-    (board[1] == player and board[2] == player and board[3] == player) or
+    if ((board[7] == playermarker and board[8] == playermarker and board[9] == playermarker) or
+    (board[4] == playermarker and board[5] == playermarker and board[6] == playermarker) or
+    (board[1] == playermarker and board[2] == playermarker and board[3] == playermarker) or
 #Checking Vertical
-    (board[7] == player and board[4] == player and board[1] == player) or
-    (board[8] == player and board[5] == player and board[2] == player) or
-    (board[9] == player and board[6] == player and board[3] == player) or
+    (board[7] == playermarker and board[4] == playermarker and board[1] == playermarker) or
+    (board[8] == playermarker and board[5] == playermarker and board[2] == playermarker) or
+    (board[9] == playermarker and board[6] == playermarker and board[3] == playermarker) or
 #Checking Diagonal
-    (board[1] == player and board[5] == player and board[9] == player) or
-    (board[7] == player and board[5] == player and board[3] == player)):
+    (board[1] == playermarker and board[5] == playermarker and board[9] == playermarker) or
+    (board[7] == playermarker and board[5] == playermarker and board[3] == playermarker)):
         return True
     else:
         pass
@@ -100,16 +117,94 @@ def newgame(board):
     for i in range(1,10):
         board[i] = " "
     return True
+
+#Allows for choice of facing another player or vs a computer
+def selectgametype():
+    gamechoice = input("Would you like to play vs a player or a computer? " )
+    gamechoice = gamechoice.lower()
+    if gamechoice == "player":
+        return 1
+    elif gamechoice == "computer" or gamechoice == "cpu":
+        return 2 
+
+    #Loops until a valid choice is made
+    while gamechoice != "cpu" and gamechoice != "computer" and gamechoice != "player":
+        gamechoice = input("Invalid input, choose again would you like to play vs a player or a computer? ")
+        gamechoice = gamechoice.lower()
+        if gamechoice == "player":
+            return 1
+        elif gamechoice == "computer" or gamechoice == "cpu":
+            return 2
+
+#Returns a valid move from the list to the board
+def randomcomputermove(board,movelist):
+    possibleMoves = []
+    for i in movelist:
+        if freespace(board,i):
+            possibleMoves.append(i)
     
+    if len(possibleMoves) != 0:
+        return random.choice(possibleMoves)
+    else:
+        return None
+
+
+
+#Logic for computers move selection
+def computermove(board,computer_marker):
+    #sets player marker variable to analyze the board
+    if computer_marker == "X":
+        player_marker = "O"
+    else:
+        player_marker = "X"
+
+    copy = []
+    for i in board:
+        copy.append(i)
+    #ALGORITHM
+    
+    #Checking first if computer's next move will win the game
+    for i in range (1,10):
+        if freespace(copy,i):
+            makemove(copy,computer_marker,i)
+            if checkwinner(copy,computer_marker) == True:
+                return i
+
+    #Check if player will win next turn
+    for i in range (1,10):
+        if freespace(copy, i):
+            makemove(copy,player_marker,i)
+            if checkwinner(copy, player_marker) == True:
+                return i
+
+    #Take the middle square if available
+    if freespace(board,5) == " ":
+        return 5
+    
+    #Takes a random available corner square
+    move = randomcomputermove(board,[1,3,7,9])
+    if move != None:
+        return move
+
+    #Takes a random available side square
+    return randomcomputermove(board,[2,4,6,8])
+
 
 
 
 def main():
     #Set up, only initialize once
     board = [" "] * 10
+    gamechoice = selectgametype()
+    print(gamechoice)
     gamestatus = True
-    player_name1, player_marker1, player_name2, player_marker2 = playerinput()
-    turn = randomstart(player_name1,player_name2)
+    if gamechoice == 1:
+        player_name1, player_marker1, player_name2, player_marker2 = twoplayerinput()
+        turn = randomstart(player_name1,player_name2)
+    if gamechoice == 2:
+        player_name1, player_marker1, computer_marker = oneplayerinput()
+        turn = randomstart(player_name1,"Computer")
+
     print ("The game will commence!")
     time.sleep(3)
     #Game loops while status is true
@@ -129,8 +224,9 @@ def main():
                 display(board)
                 print("The game is a draw")
                 gamestatus = False
+
         #logic for player 2
-        elif turn == 2:
+        elif turn == 2 and gamechoice == 1:
             display(board)
             move = playermove(board,player_name2)
             makemove(board,player_marker2,move)
@@ -143,7 +239,25 @@ def main():
             elif boardfull(board):
                 display(board)
                 print("The game is a draw")
-                gamestatus = False      
+                gamestatus = False
+
+        #logic for computer turn
+        elif turn == 2 and gamechoice == 2:
+            display(board)
+            move = computermove(board,computer_marker)
+            makemove(board,computer_marker,move)
+            turn = 1
+            if checkwinner(board,computer_marker) == True:
+                display(board)
+                print("Computer has won the game!" )
+                gamestatus = False
+           
+            elif boardfull(board):
+                display(board)
+                print("The game is a draw")
+                gamestatus = False
+
+
         #Checks if game has ended and if the players wanted to play again
         if gamestatus == False and playagain() == True:
             gamestatus = newgame(board)
