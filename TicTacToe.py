@@ -4,9 +4,17 @@ import random, time
 #Creates the initial display of the board and refreshes the board
 def display(board):
     print ("\n"* 100)
-    print (board[7] + '|' + board[8] + "|" + board[9])
-    print (board[4] + '|' + board[5] + "|" + board[6])
-    print (board[1] + '|' + board[2] + "|" + board[3])
+    print('   |   |')
+    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print('   |   |')
 
 #1 player game input
 def oneplayerinput():
@@ -148,6 +156,12 @@ def randomcomputermove(board,movelist):
     else:
         return None
 
+#Creates a copy of the board the Computer will use to manage moves. Without, it makes consecutive moves
+def copyboard(board):
+    copy = []
+    for i in board:
+        copy.append(i)
+    return copy
 
 
 #Logic for computers move selection
@@ -158,13 +172,11 @@ def computermove(board,computer_marker):
     else:
         player_marker = "X"
 
-    copy = []
-    for i in board:
-        copy.append(i)
     #ALGORITHM
     
     #Checking first if computer's next move will win the game
     for i in range (1,10):
+        copy = copyboard(board)
         if freespace(copy,i):
             makemove(copy,computer_marker,i)
             if checkwinner(copy,computer_marker) == True:
@@ -172,24 +184,25 @@ def computermove(board,computer_marker):
 
     #Check if player will win next turn
     for i in range (1,10):
+        copy = copyboard(board)
         if freespace(copy, i):
             makemove(copy,player_marker,i)
             if checkwinner(copy, player_marker) == True:
                 return i
 
-    #Take the middle square if available
-    if freespace(board,5) == " ":
-        return 5
-    
     #Takes a random available corner square
     move = randomcomputermove(board,[1,3,7,9])
     if move != None:
         return move
 
+    #Take the middle square if available
+    if freespace(board,5) == " ":
+        return 5
+
     #Takes a random available side square
-    return randomcomputermove(board,[2,4,6,8])
-
-
+    move = randomcomputermove(board,[2,4,6,8])
+    if move != None:
+        return move
 
 
 def main():
@@ -197,6 +210,8 @@ def main():
     board = [" "] * 10
     gamechoice = selectgametype()
     gamestatus = True
+    
+    #Logic for choosing game type
     if gamechoice == 1:
         player_name1, player_marker1, player_name2, player_marker2 = twoplayerinput()
         turn = randomstart(player_name1,player_name2)
@@ -206,8 +221,10 @@ def main():
 
     print ("The game will commence!")
     time.sleep(3)
+
     #Game loops while status is true
     while gamestatus == True:
+
         #Logic for player 1
         if turn == 1:
             display(board)
